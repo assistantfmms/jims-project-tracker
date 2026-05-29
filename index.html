@@ -34,7 +34,11 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 40px 24px;
+    padding: 24px 16px;
+  }
+
+  @media (min-width: 600px) {
+    body { padding: 40px 24px; }
   }
 
   .header {
@@ -427,9 +431,13 @@ const phases = [
       { id: 'w18', text: 'Set up Antennas Jobs folder in Antennas SP site', divs: ['antennas','infra'], priority: 'critical' },
       { id: 'w19', text: 'Update Teams approval card — add division label and platform toggles', divs: ['infra'], priority: 'high' },
       { id: 'w20', text: 'Add schedule date picker to Teams approval card', divs: ['infra'], priority: 'high' },
-      { id: 'w21', text: 'Build GBP HTTP POST action in PA (parameterised, untested live)', divs: ['infra'], priority: 'high' },
-      { id: 'w22', text: 'Test full flow Energy — form to Teams approval card', divs: ['energy'], priority: 'critical' },
-      { id: 'w23', text: 'Test full flow Antennas — form to Teams approval card', divs: ['antennas'], priority: 'critical' },
+      { id: 'w21', text: 'Add "Open in SharePoint" button to Teams card — direct link to job folder for image review/swap', divs: ['infra'], priority: 'high' },
+      { id: 'w21b', text: 'Add "Reject — bad photo" action to Teams card with note field for franchisee feedback', divs: ['infra'], priority: 'high' },
+      { id: 'w21c', text: 'Build reject branch in PA — update Firestore status to rejected, notify franchisee to resubmit', divs: ['infra'], priority: 'high' },
+      { id: 'w21d', text: 'Document image swap SOP for approver — open SP folder, replace branded_image.png, return to card and approve', divs: ['infra'], priority: 'medium' },
+      { id: 'w22', text: 'Build GBP HTTP POST action in PA (parameterised, untested live)', divs: ['infra'], priority: 'high' },
+      { id: 'w23', text: 'Test full flow Energy — form to Teams approval card', divs: ['energy'], priority: 'critical' },
+      { id: 'w24', text: 'Test full flow Antennas — form to Teams approval card', divs: ['antennas'], priority: 'critical' },
     ]
   },
   {
@@ -442,6 +450,8 @@ const phases = [
     tasks: [
       { id: 'k1', text: 'Clone Antennas repo → Electrical repo, update form fields', divs: ['electrical'], priority: 'critical' },
       { id: 'k2', text: 'Test full flow Electrical — form to Teams approval card', divs: ['electrical'], priority: 'critical' },
+      { id: 'k2b', text: 'Test image swap flow — replace branded_image.png in SP, confirm updated image posts correctly', divs: ['infra'], priority: 'high' },
+      { id: 'k2c', text: 'Test reject + resubmit flow — franchisee receives notification, resubmits, new run triggers', divs: ['infra'], priority: 'high' },
       { id: 'k3', text: 'Submit Meta Developer app — request pages_manage_posts and instagram_content_publish permissions', divs: ['meta'], priority: 'critical', blocker: true },
       { id: 'k4', text: 'Document Meta app use case clearly for review submission', divs: ['meta'], priority: 'critical' },
       { id: 'k5', text: 'Begin GBP verification process for Energy locations', divs: ['energy'], priority: 'critical', blocker: true },
