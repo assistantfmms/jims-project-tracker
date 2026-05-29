@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jim's Publishing System — Project Checklist</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2a2a2a;
+    --border2: #333333;
+    --text: #e8e8e0;
+    --text2: #888880;
+    --text3: #555550;
+    --accent: #c8f060;
+    --accent2: #a8d040;
+    --energy: #f0a040;
+    --antennas: #40c8f0;
+    --electrical: #c040f0;
+    --meta: #e85080;
+    --infra: #60d0a0;
+    --done-bg: #1a1f14;
+    --done-text: #4a5a30;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .header {
+    max-width: 860px;
+    margin: 0 auto 48px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .header-left p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .deadline {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 16px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .deadline .date {
+    color: var(--meta);
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+  }
+
+  .deadline .label {
+    color: var(--text3);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .progress-bar-wrap {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .filters {
+    max-width: 860px;
+    margin: 0 auto 32px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #0f0f0f; border-color: var(--accent); font-weight: 500; }
+
+  .phase {
+    max-width: 860px;
+    margin: 0 auto 32px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .phase-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .phase-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .phase-deadline {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .task:hover { border-color: var(--border2); background: var(--surface2); }
+
+  .task.done {
+    background: var(--done-bg);
+    border-color: #222;
+  }
+
+  .task.done .task-text {
+    color: var(--done-text);
+    text-decoration: line-through;
+    text-decoration-color: #3a4a28;
+  }
+
+  .task.done .task-meta { color: #2a3a20; }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .task.done .checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .task.done .checkbox::after {
+    content: '';
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid #0f0f0f;
+    border-bottom: 2px solid #0f0f0f;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+
+  .task-body { flex: 1; min-width: 0; }
+
+  .task-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+
+  .div-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+
+  .div-energy { background: #2a1f0a; color: var(--energy); }
+  .div-antennas { background: #0a1f2a; color: var(--antennas); }
+  .div-electrical { background: #1f0a2a; color: var(--electrical); }
+  .div-meta { background: #2a0a1a; color: var(--meta); }
+  .div-infra { background: #0a1f18; color: var(--infra); }
+  .div-all { background: #1f1f14; color: var(--accent); }
+
+  .priority-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+  }
+
+  .blocker-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--meta);
+    background: #2a0a1a;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .hidden { display: none !important; }
+
+  .empty-state {
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 48px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  .stats-row {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 3px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Jim's Publishing System</h1>
+    <p>GBP + Facebook + Instagram — 3 divisions — full build tracker</p>
+  </div>
+  <div class="deadline">
+    <span class="label">hard deadline</span>
+    <span class="date">1 Jul 2026</span>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 / 0 complete</div>
+</div>
+
+<div class="stats-row">
+  <div class="stat">
+    <span class="stat-num" id="stat-done" style="color:var(--accent)">0</span>
+    <span class="stat-label">Done</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="stat-remaining" style="color:var(--text2)">0</span>
+    <span class="stat-label">Remaining</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="stat-blockers" style="color:var(--meta)">0</span>
+    <span class="stat-label">Blockers</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="stat-this-week" style="color:var(--antennas)">0</span>
+    <span class="stat-label">This weekend</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="stat-phases" style="color:var(--electrical)">0</span>
+    <span class="stat-label">Phases</span>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterTasks('all')">All</button>
+  <button class="filter-btn" onclick="filterTasks('energy')" style="--hover: var(--energy)">Energy</button>
+  <button class="filter-btn" onclick="filterTasks('antennas')">Antennas</button>
+  <button class="filter-btn" onclick="filterTasks('electrical')">Electrical</button>
+  <button class="filter-btn" onclick="filterTasks('meta')">Meta</button>
+  <button class="filter-btn" onclick="filterTasks('infra')">Infrastructure</button>
+  <button class="filter-btn" onclick="filterTasks('blocker')">Blockers only</button>
+  <button class="filter-btn" onclick="filterTasks('pending')">Pending only</button>
+</div>
+
+<div id="checklist"></div>
+
+<script>
+const phases = [
+  {
+    id: 'weekend',
+    tag: 'This weekend',
+    tagColor: 'var(--accent)',
+    tagBg: '#1a2a0a',
+    title: 'Build to publishing phase',
+    deadline: 'Sun 1 Jun',
+    tasks: [
+      { id: 'w1', text: 'Clone Energy GitHub repo → Antennas repo', divs: ['antennas'], priority: 'critical' },
+      { id: 'w2', text: 'Update Antennas form fields for antenna jobs', divs: ['antennas'], priority: 'critical' },
+      { id: 'w3', text: 'Set up Antennas Firestore collection path (submissions/antennas/)', divs: ['antennas','infra'], priority: 'critical' },
+      { id: 'w4', text: 'Set up Electrical Firestore collection path (submissions/electrical/)', divs: ['electrical','infra'], priority: 'critical' },
+      { id: 'w5', text: 'Confirm Energy Firestore collection path and add division field', divs: ['energy','infra'], priority: 'critical' },
+      { id: 'w6', text: 'Create Antennas APITemplate branded image template', divs: ['antennas'], priority: 'critical' },
+      { id: 'w7', text: 'Create Electrical APITemplate branded image template', divs: ['electrical'], priority: 'critical' },
+      { id: 'w8', text: 'Wire Google OAuth credentials into Power Automate HTTP connection', divs: ['infra'], priority: 'critical' },
+      { id: 'w9', text: 'Build division branch block in PA flow (Switch on division field)', divs: ['infra'], priority: 'critical' },
+      { id: 'w10', text: 'Add Energy config variables to branch (template ID, Claude prompt, GBP account ID)', divs: ['energy'], priority: 'critical' },
+      { id: 'w11', text: 'Add Antennas config variables to branch', divs: ['antennas'], priority: 'critical' },
+      { id: 'w12', text: 'Add Electrical config variables to branch', divs: ['electrical'], priority: 'critical' },
+      { id: 'w13', text: 'Update Claude prompt to output facebook_caption and instagram_caption fields (all divs)', divs: ['all'], priority: 'critical' },
+      { id: 'w14', text: 'Write and test Energy Claude system prompt — use existing posts as style examples', divs: ['energy'], priority: 'high' },
+      { id: 'w15', text: 'Write and test Antennas Claude system prompt', divs: ['antennas'], priority: 'high' },
+      { id: 'w16', text: 'Write and test Electrical Claude system prompt', divs: ['electrical'], priority: 'high' },
+      { id: 'w17', text: 'Update SharePoint save step for division-aware folder paths', divs: ['infra'], priority: 'critical' },
+      { id: 'w18', text: 'Set up Antennas Jobs folder in Antennas SP site', divs: ['antennas','infra'], priority: 'critical' },
+      { id: 'w19', text: 'Update Teams approval card — add division label and platform toggles', divs: ['infra'], priority: 'high' },
+      { id: 'w20', text: 'Add schedule date picker to Teams approval card', divs: ['infra'], priority: 'high' },
+      { id: 'w21', text: 'Build GBP HTTP POST action in PA (parameterised, untested live)', divs: ['infra'], priority: 'high' },
+      { id: 'w22', text: 'Test full flow Energy — form to Teams approval card', divs: ['energy'], priority: 'critical' },
+      { id: 'w23', text: 'Test full flow Antennas — form to Teams approval card', divs: ['antennas'], priority: 'critical' },
+    ]
+  },
+  {
+    id: 'week1',
+    tag: 'Week 1',
+    tagColor: 'var(--antennas)',
+    tagBg: '#0a1f2a',
+    title: 'Electrical build + Meta app submission',
+    deadline: '7 Jun',
+    tasks: [
+      { id: 'k1', text: 'Clone Antennas repo → Electrical repo, update form fields', divs: ['electrical'], priority: 'critical' },
+      { id: 'k2', text: 'Test full flow Electrical — form to Teams approval card', divs: ['electrical'], priority: 'critical' },
+      { id: 'k3', text: 'Submit Meta Developer app — request pages_manage_posts and instagram_content_publish permissions', divs: ['meta'], priority: 'critical', blocker: true },
+      { id: 'k4', text: 'Document Meta app use case clearly for review submission', divs: ['meta'], priority: 'critical' },
+      { id: 'k5', text: 'Begin GBP verification process for Energy locations', divs: ['energy'], priority: 'critical', blocker: true },
+      { id: 'k6', text: 'Gather all franchisee GBP location IDs for Antennas division', divs: ['antennas','infra'], priority: 'high' },
+      { id: 'k7', text: 'Gather all franchisee GBP location IDs for Electrical division', divs: ['electrical','infra'], priority: 'high' },
+      { id: 'k8', text: 'Start franchisee lookup table in SharePoint (Division | Franchisee | GBP ID | FB Page ID | IG User ID)', divs: ['infra'], priority: 'high' },
+      { id: 'k9', text: 'Gather Facebook Page IDs for all Antennas franchisees', divs: ['antennas','meta'], priority: 'high' },
+      { id: 'k10', text: 'Gather Facebook Page IDs for all Electrical franchisees', divs: ['electrical','meta'], priority: 'high' },
+      { id: 'k11', text: 'Gather Instagram user IDs for all Antennas franchisees', divs: ['antennas','meta'], priority: 'high' },
+      { id: 'k12', text: 'Gather Instagram user IDs for all Electrical franchisees', divs: ['electrical','meta'], priority: 'high' },
+    ]
+  },
+  {
+    id: 'week2',
+    tag: 'Week 2',
+    tagColor: 'var(--electrical)',
+    tagBg: '#1f0a2a',
+    title: 'Prompt refinement + Meta build',
+    deadline: '14 Jun',
+    tasks: [
+      { id: 'm1', text: 'Refine Antennas Claude prompt against existing posts from external marketing person', divs: ['antennas'], priority: 'high' },
+      { id: 'm2', text: 'Refine Electrical Claude prompt against existing posts', divs: ['electrical'], priority: 'high' },
+      { id: 'm3', text: 'Refine Energy Claude prompt against existing posts', divs: ['energy'], priority: 'high' },
+      { id: 'm4', text: 'Finalise Antennas APITemplate template — sign off on branded image quality', divs: ['antennas'], priority: 'high' },
+      { id: 'm5', text: 'Finalise Electrical APITemplate template', divs: ['electrical'], priority: 'high' },
+      { id: 'm6', text: 'Complete franchisee lookup table in SharePoint — all franchisees all divisions', divs: ['infra'], priority: 'critical' },
+      { id: 'm7', text: 'Wire lookup table into PA flow — franchisee name → GBP/FB/IG IDs', divs: ['infra'], priority: 'critical' },
+      { id: 'm8', text: 'Meta app review returned — if approved, proceed to build', divs: ['meta'], priority: 'critical', blocker: true },
+      { id: 'm9', text: 'Build Facebook HTTP POST action in PA (all divisions)', divs: ['meta'], priority: 'critical' },
+      { id: 'm10', text: 'Build Instagram two-step HTTP action in PA (container + publish)', divs: ['meta'], priority: 'critical' },
+      { id: 'm11', text: 'Generate long-lived Meta Page Access Tokens for all franchisee pages', divs: ['meta'], priority: 'high' },
+      { id: 'm12', text: 'Wire schedule date from Teams card to all platform post calls', divs: ['infra'], priority: 'high' },
+    ]
+  },
+  {
+    id: 'week3',
+    tag: 'Week 3',
+    tagColor: 'var(--meta)',
+    tagBg: '#2a0a1a',
+    title: 'Live testing — Antennas first',
+    deadline: '21 Jun',
+    tasks: [
+      { id: 'l1', text: 'Live test Antennas GBP post — real job, real franchisee location', divs: ['antennas'], priority: 'critical' },
+      { id: 'l2', text: 'Live test Antennas Facebook post', divs: ['antennas','meta'], priority: 'critical' },
+      { id: 'l3', text: 'Live test Antennas Instagram post', divs: ['antennas','meta'], priority: 'critical' },
+      { id: 'l4', text: 'Live test scheduled post — set future date on approval card, confirm fires correctly', divs: ['infra'], priority: 'high' },
+      { id: 'l5', text: 'Onboard internal approver — walk through Teams approval card workflow', divs: ['infra'], priority: 'critical' },
+      { id: 'l6', text: 'Soft launch Antennas — real jobs processed, external person reviewing via Teams', divs: ['antennas'], priority: 'critical' },
+      { id: 'l7', text: 'Validate Claude output quality vs external person benchmark — iterate prompt if needed', divs: ['antennas'], priority: 'high' },
+      { id: 'l8', text: 'Live test Electrical GBP post', divs: ['electrical'], priority: 'critical' },
+      { id: 'l9', text: 'Live test Electrical Facebook + Instagram posts', divs: ['electrical','meta'], priority: 'critical' },
+      { id: 'l10', text: 'Test Firestore status updates through full cycle (pending → processing → completed)', divs: ['infra'], priority: 'high' },
+      { id: 'l11', text: 'Test reject flow — confirm Firestore status updates and no post fires', divs: ['infra'], priority: 'high' },
+    ]
+  },
+  {
+    id: 'week4',
+    tag: 'Week 4',
+    tagColor: 'var(--infra)',
+    tagBg: '#0a1f18',
+    title: 'Roll live — all divisions',
+    deadline: '1 Jul',
+    tasks: [
+      { id: 'r1', text: 'Roll Electrical live — all platforms', divs: ['electrical'], priority: 'critical' },
+      { id: 'r2', text: 'Roll Energy live up to Teams approval (GBP posts when verification clears)', divs: ['energy'], priority: 'critical' },
+      { id: 'r3', text: 'Live test Energy Facebook + Instagram posts', divs: ['energy','meta'], priority: 'critical' },
+      { id: 'r4', text: 'Confirm Energy GBP verification status — fire GBP post step if cleared', divs: ['energy'], priority: 'critical', blocker: true },
+      { id: 'r5', text: 'Wind down external marketing person involvement', divs: ['all'], priority: 'high' },
+      { id: 'r6', text: 'Internal approver fully independent — no external quality gate', divs: ['infra'], priority: 'critical' },
+      { id: 'r7', text: 'Error handling — PA flow alerts on failed API calls (GBP, Meta)', divs: ['infra'], priority: 'high' },
+      { id: 'r8', text: 'Meta token expiry monitoring — set calendar reminder for 60-day token refresh', divs: ['meta'], priority: 'high' },
+      { id: 'r9', text: 'Document franchisee onboarding process — how to add new franchisee to lookup table', divs: ['infra'], priority: 'medium' },
+      { id: 'r10', text: 'Final review — all 3 divisions, all 3 platforms, live and stable', divs: ['all'], priority: 'critical' },
+    ]
+  },
+  {
+    id: 'ongoing',
+    tag: 'Ongoing',
+    tagColor: 'var(--text2)',
+    tagBg: '#1f1f1f',
+    title: 'Post-launch + future phases',
+    deadline: 'Jul+',
+    tasks: [
+      { id: 'o1', text: 'Energy GBP posts live once all locations verified', divs: ['energy'], priority: 'medium', blocker: true },
+      { id: 'o2', text: 'Build solar+battery APITemplate template for Energy', divs: ['energy'], priority: 'medium' },
+      { id: 'o3', text: 'Build battery-only APITemplate template for Energy', divs: ['energy'], priority: 'medium' },
+      { id: 'o4', text: 'Add SEO tags and social_caption fields to Claude JSON output', divs: ['all'], priority: 'low' },
+      { id: 'o5', text: 'Review Meta posting analytics — refine Claude prompts based on engagement', divs: ['meta'], priority: 'low' },
+      { id: 'o6', text: 'Consider blog publishing automation — connect blog_post output to website CMS', divs: ['all'], priority: 'low' },
+    ]
+  }
+];
+
+let activeFilter = 'all';
+let taskState = {};
+
+function getStorageKey() { return 'jims_checklist_v1'; }
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(getStorageKey());
+    if (saved) taskState = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem(getStorageKey(), JSON.stringify(taskState)); } catch(e) {}
+}
+
+function toggleTask(id) {
+  taskState[id] = !taskState[id];
+  saveState();
+  render();
+}
+
+function filterTasks(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+}
+
+function taskMatchesFilter(task) {
+  if (activeFilter === 'all') return true;
+  if (activeFilter === 'pending') return !taskState[task.id];
+  if (activeFilter === 'blocker') return !!task.blocker;
+  return task.divs.includes(activeFilter);
+}
+
+function render() {
+  const container = document.getElementById('checklist');
+  container.innerHTML = '';
+
+  let totalTasks = 0, doneTasks = 0, blockerTotal = 0, weekendTotal = 0;
+
+  phases.forEach(phase => {
+    const visibleTasks = phase.tasks.filter(taskMatchesFilter);
+    if (visibleTasks.length === 0) return;
+
+    const phaseDiv = document.createElement('div');
+    phaseDiv.className = 'phase';
+
+    const phaseDone = phase.tasks.filter(t => taskState[t.id]).length;
+    totalTasks += phase.tasks.length;
+    doneTasks += phaseDone;
+    blockerTotal += phase.tasks.filter(t => t.blocker).length;
+    if (phase.id === 'weekend') weekendTotal += phase.tasks.filter(t => !taskState[t.id]).length;
+
+    phaseDiv.innerHTML = `
+      <div class="phase-header">
+        <span class="phase-tag" style="background:${phase.tagBg};color:${phase.tagColor}">${phase.tag}</span>
+        <span class="phase-title">${phase.title}</span>
+        <span class="phase-count">${phaseDone}/${phase.tasks.length}</span>
+        <span class="phase-deadline">${phase.deadline}</span>
+      </div>
+    `;
+
+    visibleTasks.forEach(task => {
+      const done = !!taskState[task.id];
+      const taskEl = document.createElement('div');
+      taskEl.className = `task${done ? ' done' : ''}`;
+      taskEl.onclick = () => toggleTask(task.id);
+
+      const divTags = task.divs.map(d => `<span class="div-tag div-${d}">${d}</span>`).join('');
+      const blockerTag = task.blocker ? '<span class="blocker-tag">⚡ blocker</span>' : '';
+      const priorityTag = task.priority === 'critical' ? '<span class="priority-tag">critical</span>' : '';
+
+      taskEl.innerHTML = `
+        <div class="checkbox"></div>
+        <div class="task-body">
+          <div class="task-text">${task.text}</div>
+          <div class="task-meta">${divTags}${blockerTag}${priorityTag}</div>
+        </div>
+      `;
+      phaseDiv.appendChild(taskEl);
+    });
+
+    container.appendChild(phaseDiv);
+  });
+
+  const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${doneTasks} / ${totalTasks} complete — ${pct}%`;
+  document.getElementById('stat-done').textContent = doneTasks;
+  document.getElementById('stat-remaining').textContent = totalTasks - doneTasks;
+  document.getElementById('stat-blockers').textContent = blockerTotal;
+  document.getElementById('stat-this-week').textContent = weekendTotal;
+  document.getElementById('stat-phases').textContent = phases.length;
+}
+
+loadState();
+render();
+</script>
+</body>
+</html>
